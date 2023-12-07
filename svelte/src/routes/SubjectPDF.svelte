@@ -13,7 +13,7 @@
     
             <div class="row">
                 <div class="col-3">
-                    <div><img src="unam-logo.png" style="max-width: 250px;" alt="Logo UNAM" /></div>
+                    <div><img src="unam-logo.png" style="max-width: 150px;" alt="Logo UNAM" /></div>
                 </div>
         
                 <div class="col-6">
@@ -24,7 +24,7 @@
                 </div>
         
                 <div class="col-3">
-                    <div><img src="unam-logo.png" style="max-width: 250px;" alt="Logo UNAM" /></div>
+                    <div><img src="rh-unam.png" style="max-width: 250px;" alt="RH UNAM" /></div>
                 </div>
             </div>
         
