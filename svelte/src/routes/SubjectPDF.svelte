@@ -7,13 +7,13 @@
 
 <div class="contenedorCarta">
 
-    <div id="content" style="height: 100%;">
+    <div id="content" style="height: 100%;" class="d-flex flex-column justify-content-between">
 
-        <div class="docHeader align-self-start">
+        <div class="docHeader ">
     
             <div class="row">
                 <div class="col-3">
-                    <div class="unam-logo"><img src="../static/unam-logo.png" alt="Logo UNAM" /></div>
+                    <div><img src="unam-logo.png" style="max-width: 250px;" alt="Logo UNAM" /></div>
                 </div>
         
                 <div class="col-6">
@@ -24,7 +24,7 @@
                 </div>
         
                 <div class="col-3">
-                    <div class="aragon-logo"><img src="aragon-logo.png" alt="Logo FES Aragon" /></div>
+                    <div><img src="unam-logo.png" style="max-width: 250px;" alt="Logo UNAM" /></div>
                 </div>
             </div>
         
@@ -40,16 +40,19 @@
                     UNIDAD RESPONSABLE: DIVISION DE CIENCIAS FISICO MATEMATICAS Y LAS INGENIERIAS - 0
                 </div>
             </div>
+
+            <br>
+            
+            <div class="tableContainer ">
+                <SubjectTable {subject} />
+            </div>
         </div>
     
     
     
-        <div class="tableContainer align-self-center">
-            <SubjectTable {subject} />
-        </div>
     
 
-        <div class="footer align-self-end">
+        <div class="footer ">
             <div class="d-flex justify-content-center">
                 <div>Nezahualcóyotl, Estado de México, a 23 de Noviembre del 2023</div>
                 <div><strong> "POR MI RAZA HABLARÁ EL ESPÍRITU"</strong></div>
@@ -109,7 +112,7 @@
 	}
 
 	.tableCareer {
-		font-size: 12px;
+		font-size: 10px;
 	}
 
 	.blue-border {
