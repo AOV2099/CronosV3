@@ -2,7 +2,11 @@
 	import { selectedPage, subjectsData } from '../store';
 	import SubjectTable from './SubjectTable.svelte';
 
-	export let subject;
+	export let subjectKey;
+	let subject = $subjectsData[subjectKey];
+	console.log('SUBJJECT', subject);
+	let initialData = $subjectsData[subjectKey][0];
+	console.log('INITIAL DATA', initialData);
 </script>
 
 <div class="contenedorCarta">
@@ -41,14 +45,99 @@
 			<br />
 
 			<div class="tableContainer">
-				<SubjectTable {subject} />
+				<SubjectTable {subjectKey} />
 			</div>
 		</div>
 
 		<div class="footer">
-			<div class="d-flex justify-content-center">
-				<div>Nezahualcóyotl, Estado de México, a 23 de Noviembre del 2023</div>
-				<div><strong> "POR MI RAZA HABLARÁ EL ESPÍRITU"</strong></div>
+			<div class="table-responsive-sm">
+				<table class="table">
+					<tr class="invisible">
+						<th colspan="3"></th>
+						<th colspan="3">INICIO</th>
+						<th colspan="3">TERMINO</th>
+						<th colspan="4"></th>
+						<th colspan="3">HORAS</th>
+						<th colspan="2"></th>
+					</tr>
+					<tr style="text-align:center;" class="invisible">
+						<th>Mov.</th>
+						<th>Causa</th>
+						<th>Categoría</th>
+						<th>D</th>
+						<th>M</th>
+						<th>A</th>
+						<th>D</th>
+						<th>M</th>
+						<th>A</th>
+						<th>Plan</th>
+						<th>CVE <br />Asig.</th>
+						<th>Nombre <br /> Asignatura / Actividad</th>
+						<th>Grupo</th>
+						<th>Teo.</th>
+						<th>Prác.</th>
+						<th>Tot.</th>
+						<th>Horario</th>
+						<th>Salón</th>
+					</tr>
+
+					{#each subject as rowData}
+						<tr class="invisible">
+							<td>{rowData.tipo}</td>
+							<td>{rowData.causa}</td>
+							<td>{rowData.categoria}</td>
+							<td>{rowData.diaIni}</td>
+							<td>{rowData.mesIni}</td>
+							<td>{rowData.anoIni}</td>
+							<td>{rowData.diaFin}</td>
+							<td>{rowData.mesFin}</td>
+							<td>{rowData.anoFin}</td>
+							<td>{rowData.planEstudios}</td>
+							<td>{rowData.cveAsignatura}</td>
+							<td>{rowData.nombreAsignatura}</td>
+							<td class="thCentrado">{rowData.grupo}</td>
+							<td class="thCentrado">{rowData.horasTeoricas || 0}</td>
+							<td class="thCentrado">{rowData.horasPracticas || 0}</td>
+							<td class="thCentrado">{rowData.horasTotal || 0}</td>
+							<td class="thCentrado">{rowData.horario}</td>
+							<!--<td class="thCentrado">{subject.horario}Lu,Mi <br />17:00-18:30 <br />17:00-18:30</td>-->
+							<td class="thCentrado">{rowData.salon}</td>
+						</tr>
+					{/each}
+
+					<tr>
+						<td colspan="9"></td>
+						<td style="text-align: right; border:1px solid #000" colspan="3" class="filaTotales"
+							><strong>Totales:</strong>
+						</td>
+						<td></td>
+						<td class="thCentrado filaTotales" style=" border:1px solid #000">{initialData.horasTeoricasTotal || 0}</td>
+						<td class="thCentrado filaTotales" style=" border:1px solid #000">{initialData.horasPracticasTotal || 0}</td>
+						<td class="thCentrado filaTotales" style=" border:1px solid #000">{initialData.horasTotalTotal || 0}</td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="18" style="text-align: left; width: 100%;">
+						
+						</td>
+					</tr>
+					<tr>
+						<td colspan="18" class="filaTotales" style="text-align: left; width: 100%; border:1px solid #000"
+							>Observaciones: {initialData.observaciones || ''}
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<br />
+
+			<div>
+				<div class="d-flex justify-content-center">
+					Nezahualcóyotl, Estado de México, a 23 de Noviembre del 2023
+				</div>
+				<div class="d-flex justify-content-center">
+					<strong> "POR MI RAZA HABLARÁ EL ESPÍRITU"</strong>
+				</div>
 			</div>
 
 			<br />
@@ -66,7 +155,7 @@
 						________________________________________________
 					</div>
 
-					<div class="d-flex justify-content-center">ABURTO CAMACHO BLANCA PAMELA</div>
+					<div class="d-flex justify-content-center">{initialData.profesor}</div>
 				</div>
 
 				<div class="">
@@ -125,5 +214,35 @@
 
 	.footer {
 		font-size: 12px;
+	}
+
+	.table {
+		/* Estilos de tu tabla aquí */
+		border-collapse: collapse;
+		font-size: 8px;
+		width: 100%;
+	}
+
+	.table th,
+	.table td {
+		
+		padding: 4px;
+		text-align: center;
+	}
+
+	th {
+		background-color: #96b5e4;
+	}
+
+	.thCentrado {
+		text-align: center;
+	}
+
+	.filaTotales {
+		background-color: #dedede;
+	}
+
+	.invisible {
+		visibility: collapse;
 	}
 </style>
