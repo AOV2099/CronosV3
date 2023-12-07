@@ -6,116 +6,83 @@
 	import { onMount } from 'svelte';
 	import { tick } from 'svelte';
 	import SubjectPdf from './SubjectPDF.svelte';
+	import { scale } from 'svelte/transition';
 
-	async function generateSubjectHTML(subject) {
-		return `
-    
+	let showProgress = false;
+	let progress = 0;
+	let totalFiles = 0;
+	let currentFile = 0;
 
-        <div class="table-responsive">
-
-            <table class="table">
-                <tr>
-                    <th colspan="3"></th>
-                    <th colspan="3">INICIO</th>
-                    <th colspan="3">TERMINO</th>
-                    <th colspan="4"></th>
-                    <th colspan="3">HORAS</th>
-                    <th colspan="2"></th>
-                </tr>
-                <tr style="text-align:center;">
-                    <th>Mov.</th>
-                    <th>Causa</th>
-                    <th>Categoría</th>
-                    <th>D</th>
-                    <th>M</th>
-                    <th>A</th>
-                    <th>D</th>
-                    <th>M</th>
-                    <th>A</th>
-                    <th>Plan</th>
-                    <th>CVE <br />Asig.</th>
-                    <th>Nombre <br /> Asignatura / Actividad</th>
-                    <th>Grupo</th>
-                    <th>Teo.</th>
-                    <th>Prác.</th>
-                    <th>Tot.</th>
-                    <th>Horario</th>
-                    <th>Salón</th>
-                </tr>
-                <tr>
-                    <td>${subject.tipo}</td>
-                    <td>${subject.causa}</td>
-                    <td>${subject.categoria}</td>
-                    <td>${subject.Texto162}</td>
-                    <td>${subject.Texto168}</td>
-                    <td>${subject.Texto169}</td>
-                    <td>${subject.Texto170}</td>
-                    <td>${subject.Texto171}</td>
-                    <td>${subject.Texto172}</td>
-                    <td>${subject.Texto126}</td>
-                    <td>${subject.cveAsignatura}</td>
-                    <td>${subject.nombreAsignatura}</td>
-                    <td class="thCentrado">${subject.grupo}</td>
-                    <td class="thCentrado">${subject.horasTeoricas}</td>
-                    <td class="thCentrado">${subject.horasPracticas}</td>
-                    <td class="thCentrado">${subject.horasTotal}</td>
-                    <td class="thCentrado">${subject.horario}</td>
-                    <!--<td class="thCentrado">${subject.horario}Lu,Mi <br />17:00-18:30 <br />17:00-18:30</td>-->
-                    <td class="thCentrado">${subject.salon}</td>
-                </tr>
-                <tr>
-                    <td colspan="9"></td>
-                    <td style="text-align: right;" colspan="3" class="filaTotales"><strong>Totales:</strong> </td>
-                    <td></td>
-                    <td class="thCentrado filaTotales">0</td>
-                    <td class="thCentrado filaTotales">3</td>
-                    <td class="thCentrado filaTotales">3</td>
-                    <td colspan="2"></td>
-                </tr>
-                <tr>
-                    <td colspan="18" class="filaTotales" style="text-align: left;" >Observaciones: </td>
-                </tr>
-            </table>
-        </div>
-
-        <hr />
-
-    `;
+	function openModal(total) {
+		totalFiles = total;
+		showProgress = true;
 	}
 
-	async function generatePDF(subjectData) {
-		const doc = new jsPDF();
+	function closeModal() {
+		showProgress = false;
+	}
 
-		// Obtener el HTML del sujeto
-		const subjectHTML = await generateSubjectHTML(subjectData);
-		console.log('SUBJECT HTML: ', subjectHTML);
-		// Crear el contenido del PDF con el HTML obtenido
-		const htmlContent = `
-        <html>
-            <head>
-                <title>Título del PDF</title>
-                <!-- Agrega estilos si es necesario -->
-                <style>
-                    /* Estilos CSS para el contenido del PDF */
-                    /* ... */
-                </style>
-            </head>
-            <body>
-                <!-- Renderiza el HTML del sujeto dentro del PDF -->
-                <div class="pdf-content">
-                    <h4>CRONOS V3</h4>
-                    ${subjectHTML} <!-- Insertar el HTML generado del sujeto -->
-                </div>
-            </body>
-        </html>
-    `;
+	function updateProgress() {
+		currentFile++;
+		progress = (currentFile / totalFiles) * 100;
 
-		// Agregar el contenido al PDF y guardarlo
-		doc.html(htmlContent, {
-			callback: () => {
-				doc.save('componente_svelte.pdf');
+		if (currentFile === totalFiles) {
+			closeModal();
+		}
+	}
+
+	async function generatePDF() {
+		const scaleFactor = 1; // Ajustar la escala según sea necesario
+		const doc = new jsPDF('landscape'); // Establecer orientación horizontal
+		const pageWidth = doc.internal.pageSize.getWidth(); // Ancho de página menos márgenes
+
+		const containers = document.querySelectorAll('.pdf-container');
+		const batchSize = 50;
+		const totalContainers = containers.length;
+		
+
+		openModal(totalContainers);
+
+		let pageIndex = 0;
+
+		for (let i = 0; i < containers.length; i++) {
+			const container = containers[i];
+			const containerContent = container.innerHTML;
+
+			const contentWidth = container.offsetWidth;
+			if (contentWidth > pageWidth) {
+				container.style.transform = `scale(${scaleFactor})`;
+				container.style.transformOrigin = '0 0'; // Ajustar el punto de transformación
 			}
-		});
+
+			const contentImage = await html2canvas(container, {
+				scale: 2, // Escalar el contenido
+				useCORS: true, // Manejo de CORS para imágenes externas
+				allowTaint: true, // Permitir imagen cargada en el canvas
+				dpi: 144 // Ajustar la resolución (dpi) para mejorar la calidad
+			});
+
+			const contentDataURL = contentImage.toDataURL('image/png'); // Convertir el contenido a imagen
+
+			doc.addImage(
+				contentDataURL,
+				'PNG',
+				0,
+				0,
+				doc.internal.pageSize.getWidth(),
+				doc.internal.pageSize.getHeight()
+			);
+
+			if ((i + 1) % batchSize === 0 || i === containers.length - 1) {
+				doc.save(`subjects_data_${pageIndex + 1}.pdf`);
+				doc.deletePage(); // Eliminar la página actual para el próximo PDF
+				pageIndex++;
+			} else {
+				doc.addPage(); // Agregar una nueva página si no se alcanza el límite por PDF
+			}
+
+			updateProgress();
+		}
 	}
 </script>
 
@@ -138,7 +105,7 @@
 		<button
 			class="btn btn-success"
 			on:click={() => {
-				generatePDF($subjectsData[0]);
+				generatePDF();
 			}}
 		>
 			Descargar <i class="bi bi-file-earmark-arrow-down"></i>
@@ -150,7 +117,7 @@
 
 <div>
 	{#each $subjectsData as subject}
-		<div class="d-flex justify-content-center">
+		<div class="d-flex justify-content-center pdf-container">
 			<SubjectPdf {subject} />
 		</div>
 
@@ -159,3 +126,39 @@
 	{/each}
 </div>
 
+{#if showProgress}
+	<div class="modal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Procesando archivos PDF</h5>
+					<!--<button type="button" class="close" on:click={closeModal}>
+						<span>&times;</span>
+					</button>-->
+				</div>
+				<div class="modal-body">
+					<div class="progress">
+						<div
+							class="progress-bar"
+							role="progressbar"
+							style="width: {progress.toFixed()}%"
+							aria-valuenow={progress.toFixed()}
+							aria-valuemin="0"
+							aria-valuemax="100"
+						>
+							{progress.toFixed()}%
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<style>
+	.pdf-container {
+		max-width: 100%; /* Limita el ancho del contenedor al ancho de la página */
+		max-height: 100%; /* Limita la altura del contenedor al alto de la página */
+		overflow: hidden; /* Oculta el contenido que se desborde */
+	}
+</style>
