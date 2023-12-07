@@ -1,6 +1,11 @@
 <script>
-	export let subject;
-	//console.log(subject);
+	import { subjectsData } from "../store";
+
+    export let subjectKey;
+	let subject = $subjectsData[subjectKey];
+	console.log("SUBJJECT", subject);
+	let initialData = ($subjectsData[subjectKey])[0];
+	console.log("INITIAL DATA", initialData);
 </script>
 
 
@@ -36,39 +41,44 @@
             <th>Horario</th>
             <th>Salón</th>
         </tr>
+
+        {#each subject as rowData }
         <tr>
-            <td>{subject.tipo}</td>
-            <td>{subject.causa}</td>
-            <td>{subject.categoria}</td>
-            <td>{subject.Texto162}</td>
-            <td>{subject.Texto168}</td>
-            <td>{subject.Texto169}</td>
-            <td>{subject.Texto170}</td>
-            <td>{subject.Texto171}</td>
-            <td>{subject.Texto172}</td>
-            <td>{subject.Texto126}</td>
-            <td>{subject.cveAsignatura}</td>
-            <td>{subject.nombreAsignatura}</td>
-            <td class="thCentrado">{subject.grupo}</td>
-            <td class="thCentrado">{subject.horasTeoricas}</td>
-            <td class="thCentrado">{subject.horasPracticas}</td>
-            <td class="thCentrado">{subject.horasTotal}</td>
-            <td class="thCentrado">{subject.horario}</td>
+            <td>{rowData.tipo}</td>
+            <td>{rowData.causa}</td>
+            <td>{rowData.categoria}</td>
+            <td>{rowData.diaIni}</td>
+            <td>{rowData.mesIni}</td>
+            <td>{rowData.anoIni}</td>
+            <td>{rowData.diaFin}</td>
+            <td>{rowData.mesFin}</td>
+            <td>{rowData.anoFin}</td>
+            <td>{rowData.planEstudios}</td>
+            <td>{rowData.cveAsignatura}</td>
+            <td>{rowData.nombreAsignatura}</td>
+            <td class="thCentrado">{rowData.grupo}</td>
+            <td class="thCentrado">{rowData.horasTeoricas || 0}</td>
+            <td class="thCentrado">{rowData.horasPracticas || 0}</td>
+            <td class="thCentrado">{rowData.horasTotal || 0}</td>
+            <td class="thCentrado">{rowData.horario}</td>
             <!--<td class="thCentrado">{subject.horario}Lu,Mi <br />17:00-18:30 <br />17:00-18:30</td>-->
-            <td class="thCentrado">{subject.salon}</td>
+            <td class="thCentrado">{rowData.salon}</td>
         </tr>
-        <tr>
+        {/each}
+        
+        
+        <!--<tr>
             <td colspan="9"></td>
             <td style="text-align: right;" colspan="3" class="filaTotales"><strong>Totales:</strong> </td>
             <td></td>
-            <td class="thCentrado filaTotales">0</td>
-            <td class="thCentrado filaTotales">3</td>
-            <td class="thCentrado filaTotales">3</td>
+            <td class="thCentrado filaTotales">{initialData.horasTeoricasTotal || 0 }</td>
+            <td class="thCentrado filaTotales">{initialData.horasPracticasTotal || 0 }</td>
+            <td class="thCentrado filaTotales">{initialData.horasTotalTotal || 0 }</td>
             <td colspan="2"></td>
         </tr>
         <tr>
-            <td colspan="18" class="filaTotales" style="text-align: left;" >Observaciones: </td>
-        </tr>
+            <td colspan="18" class="filaTotales" style="text-align: left;" >Observaciones: {initialData.observaciones  } </td>
+        </tr>-->
     </table>
 </div>
 

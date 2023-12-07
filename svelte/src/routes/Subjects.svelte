@@ -116,9 +116,9 @@
 <br />
 
 <div>
-	{#each $subjectsData as subject}
+	{#each Object.keys($subjectsData) as subjectKey}
 		<div class="d-flex justify-content-center pdf-container">
-			<SubjectPdf {subject} />
+			<SubjectPdf {subjectKey} />
 		</div>
 
 		<br />
