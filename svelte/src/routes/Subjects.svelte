@@ -32,58 +32,59 @@
 	}
 
 	async function generatePDF() {
-		const scaleFactor = 1; // Ajustar la escala según sea necesario
-		const doc = new jsPDF('landscape'); // Establecer orientación horizontal
-		const pageWidth = doc.internal.pageSize.getWidth(); // Ancho de página menos márgenes
+    const scaleFactor = 1;
+    const doc = new jsPDF('landscape');
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-		const containers = document.querySelectorAll('.pdf-container');
-		const batchSize = 50;
-		const totalContainers = containers.length;
-		
+    const containers = document.querySelectorAll('.pdf-container');
+    const batchSize = 50;
+    const totalContainers = containers.length;
 
-		openModal(totalContainers);
+    openModal(totalContainers);
 
-		let pageIndex = 0;
+    let pageIndex = 0;
 
-		for (let i = 0; i < containers.length; i++) {
-			const container = containers[i];
-			const containerContent = container.innerHTML;
+    for (let i = 0; i < containers.length; i++) {
+        const container = containers[i];
+        const containerContent = container.innerHTML;
 
-			const contentWidth = container.offsetWidth;
-			if (contentWidth > pageWidth) {
-				container.style.transform = `scale(${scaleFactor})`;
-				container.style.transformOrigin = '0 0'; // Ajustar el punto de transformación
-			}
+        const contentWidth = container.offsetWidth;
+        if (contentWidth > pageWidth) {
+            container.style.transform = `scale(${scaleFactor})`;
+            container.style.transformOrigin = '0 0';
+        }
 
-			const contentImage = await html2canvas(container, {
-				scale: 2, // Escalar el contenido
-				useCORS: true, // Manejo de CORS para imágenes externas
-				allowTaint: true, // Permitir imagen cargada en el canvas
-				dpi: 144 // Ajustar la resolución (dpi) para mejorar la calidad
-			});
+        const contentImage = await html2canvas(container, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            dpi: 144
+        });
 
-			const contentDataURL = contentImage.toDataURL('image/png'); // Convertir el contenido a imagen
+        const contentDataURL = contentImage.toDataURL('image/png');
 
-			doc.addImage(
-				contentDataURL,
-				'PNG',
-				0,
-				0,
-				doc.internal.pageSize.getWidth(),
-				doc.internal.pageSize.getHeight()
-			);
+        doc.addImage(
+            contentDataURL,
+            'PNG',
+            0,
+            0,
+            doc.internal.pageSize.getWidth(),
+            doc.internal.pageSize.getHeight()
+        );
 
-			if ((i + 1) % batchSize === 0 || i === containers.length - 1) {
-				doc.save(`subjects_data_${pageIndex + 1}.pdf`);
-				doc.deletePage(); // Eliminar la página actual para el próximo PDF
-				pageIndex++;
-			} else {
-				doc.addPage(); // Agregar una nueva página si no se alcanza el límite por PDF
-			}
+        if ((i + 1) % batchSize === 0 || i === containers.length - 1) {
+            doc.save(`subjects_data_${pageIndex + 1}.pdf`);
+            doc.deletePage(); // Eliminar la página actual para liberar memoria
+            doc.text(''); // Limpiar contenido del documento PDF
+            pageIndex++;
+        } else {
+            doc.addPage();
+        }
 
-			updateProgress();
-		}
-	}
+        updateProgress();
+    }
+}
+
 </script>
 
 <br />
