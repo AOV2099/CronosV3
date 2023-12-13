@@ -4,9 +4,9 @@
 
 	export let subjectKey;
 	let subject = $subjectsData[subjectKey];
-	console.log('SUBJJECT', subject);
+	//console.log('SUBJJECT', subject);
 	let initialData = $subjectsData[subjectKey][0];
-	console.log('INITIAL DATA', initialData);
+	//console.log('INITIAL DATA', initialData);
 </script>
 
 <div class="contenedorCarta">
@@ -194,7 +194,7 @@
 	.contenedorCarta {
 		height: 8.5in; /* Ancho de una hoja carta */
 		width: 11in; /* Alto de una hoja carta */
-		border: 1px solid #b6b6b6;
+		border: 0px solid #b6b6b6;
 		padding: 32px;
 	}
 

@@ -3,9 +3,7 @@
 
     export let subjectKey;
 	let subject = $subjectsData[subjectKey];
-	console.log("SUBJJECT", subject);
 	let initialData = ($subjectsData[subjectKey])[0];
-	console.log("INITIAL DATA", initialData);
 </script>
 
 

@@ -93,7 +93,7 @@
 			class="btn btn-danger"
 			style="margin-right: 8px;"
 			on:click={() => {
-				selectedPage.set(0);
+				selectedPage.set(3);
 			}}
 		>
 			Regresar <i class="bi bi-x-square"></i>
